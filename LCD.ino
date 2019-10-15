@@ -18,40 +18,6 @@ void drawPadrao(void)
 {
   u8g.setFont(u8g_font_unifont);
   u8g.drawStr( 0, 22, "SYSTEM SEG & CIA");
-
-  /*String sDados = "";
-  DateTime now = rtc.now();
-  if (now.day() < 10) sDados += "0";
-  sDados += String(now.day());
-  sDados += "/";
-  if (now.month() < 10) sDados += "0";
-  sDados += String(now.month());
-  sDados += "/";
-  sDados += String(now.year());
-  sDados += " ";
-  if (now.hour() < 10) sDados += "0";
-  sDados += String(now.hour());
-  sDados += ":";
-  if (now.minute() < 10) sDados += "0";
-  sDados += String(now.minute());*/
-
-  
-  char sDados[20];
-  const char *filtroDt = "esp01:dt=";
-  for (int i = 0; i < 20; i++) sDados[i] = 0;
-  for (int j = 0; j < BUFFER_SIZE - strlen(filtroDt); j++)
-  {
-    if (strncmp(&buffer[j], filtroDt, strlen(filtroDt)) == 0)
-    {
-      for (int k = 0; k < 18; k++)
-      {
-        sDados[k] = buffer[j + strlen(filtroDt) + k];
-      }
-    }
-  }
-
-  u8g.setPrintPos(0, 44); 
-  u8g.print(sDados);
 }
 
 void atualizaTelaLCD(int qual)
@@ -59,6 +25,8 @@ void atualizaTelaLCD(int qual)
   Serial.println("Montando dados no LCD...");
   Serial.print("Qual = ");
   Serial.println(qual, DEC);
+
+  if (DEBUG) { Serial.print("Idade LCD3: "); Serial.println(idade_dias); }
   
   u8g.firstPage();
   do 
@@ -101,6 +69,8 @@ void mostraDadosLCD()
 
   for (int i = 0; i < 3; i++) tipo[i] = 0;
   for (int i = 0; i < 18; i++) valor[i] = 0;
+
+  if (DEBUG) { Serial.print("Idade LCD2: "); Serial.println(idade_dias); }
   
   for (int j = 0; j < BUFFER_SIZE - TAMANHO_FILTRO; j++)
   {
@@ -221,6 +191,8 @@ void mostraDadosLCD()
       for (int i = 0; i < 18; i++) valor[i] = 0;
     }
   }
+
+  if (DEBUG) { Serial.print("Idade LCD1: "); Serial.println(idade_dias); }
 
   u8g.setPrintPos(colLabel, linha6);
   u8g.print("Idade:");

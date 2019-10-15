@@ -23,6 +23,9 @@ void enviarSerial()
     idade_dias = getIdade();
     indice_dias = getIndiceDias();
 
+    if (DEBUG) { Serial.print("idade_dias: "); Serial.println(idade_dias); }
+    if (DEBUG) { Serial.print("indice_dias: "); Serial.println(indice_dias); }
+
     Serial.print("buffer antes: ");
     Serial.println(buffer);
 
@@ -69,7 +72,7 @@ void enviarSerial()
 }
 
 
-// esp01:an=004,esp01:tp=26.9,esp01:um=34.5,esp01:am=150,esp01:co=003,esp01:lu=010,esp01:pe=2.901,esp01:pr=900,esp01:bl=1
+// esp01:an=004,esp01:tp=26.9,esp01:um=34.5,esp01:am=150,esp01:co=003,esp01:lu=010,esp01:pe=2.901,esp01:pr=900,esp01:bl=1,
 // esp01:an=004,esp01:tp=15.9,esp01:um=345.5,esp01:am=150,esp01:co=003,esp01:lu=010,
 // esp01:an=004,esp01:tp=26.9,esp01:um=34.5,esp01:am=150,esp01:co=003,esp01:lu=010,
 void tratarSerial()

@@ -82,7 +82,7 @@
 
 // Configuração de depuração
 // Somente ligar quando estiver testando no PC
-#define DEBUG 1
+#define DEBUG 0
 
 // Porta do LEDL
 #define LEDL                  13
@@ -132,7 +132,7 @@ unsigned long tempo_envio_normal  = 0UL;
 unsigned long tempo_envio_alerta  = 0UL;
 
 int contador = 0;
-boolean serialTerminou = false;
+volatile boolean serialTerminou = false;
 boolean serialRecebeu = false;
 
 // Variaveis de controle da serial
@@ -215,6 +215,8 @@ void setup()
   idade_dias = getIdade();
   indice_dias = getIndiceDias();
   if (DEBUG) Serial.println("DIAS OK!");
+  if (DEBUG) { Serial.print("idade_dias: "); Serial.println(idade_dias); }
+  if (DEBUG) { Serial.print("indice_dias: "); Serial.println(indice_dias); }
 
   // Configurando LCD
   u8g.setColorIndex(1);
@@ -266,24 +268,34 @@ void loop()
       if (contador < BUFFER_SIZE - 1)
         buffer[contador++] = c;
     }
-    else
+    else {
       serialTerminou = true;
+      if (DEBUG) Serial.println("Serial Terminou");
+      if (DEBUG) { Serial.print("Contador: "); Serial.println(contador); }
+      if (DEBUG) Serial.println(buffer);
+    }
   }
 
-  if (serialTerminou)
+  if (serialTerminou && contador > 0)
   {
+
+    if (DEBUG) { Serial.print("Contador2: "); Serial.println(contador); }
     
     // Tratando dados da serial
+    if (DEBUG) Serial.println("tratarSerial");
     tratarSerial();
 
     // reiniciando variáveis da serial
+    if (DEBUG) Serial.println("serialTerminou");
     contador = 0;
     serialTerminou = false;
 
     // Avisando que dados estão disponíveis da serial
+    if (DEBUG) Serial.println("serialRecebeu");
     serialRecebeu = true;
 
     // Enviando dados para o Arduino Principal
+    if (DEBUG) Serial.println("enviarSerial");
     enviarSerial();
 
     // reiniciando buffers
@@ -460,6 +472,10 @@ void loop()
   {
     // Efetuando reset
     efetuarResetGSM();
+
+    if (DEBUG) Serial.println("Efetuei reset");
+    if (DEBUG) { Serial.print("serialTerminou? "); Serial.println(serialTerminou ? "sim" : "nao"); }
+    serialTerminou = false;
 
     // Limpando SDCard
     //while (isMsgPos()) { delMsgPos(); delay(300); }

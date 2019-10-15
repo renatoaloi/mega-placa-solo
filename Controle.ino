@@ -162,8 +162,8 @@ String trataRegistro(char *__buffer)
         sValor = String(indice_dias);
       }
       if (tipo[0] == 'd' && tipo[1] == 'n') {
-        idade_dias = atoi(valor);
-        sValor = String(idade_dias);
+        //idade_dias = atoi(valor);
+        //sValor = String(idade_dias);
       }
       //
 
