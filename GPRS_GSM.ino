@@ -70,7 +70,7 @@ void configVelocidade()
         delay(1000);
         
         Serial3.println("AT&W");
-        Serial.println("AT&W");
+        Serial.println(F("AT&W"));
         delay(2000);
   
         // Verifica resposta
@@ -263,7 +263,7 @@ bool enviarTelegram(char *msg)
           gprs_send(",30000\r\n");
           if (check_gprs(5000, "DOWNLOAD\r\n", 10))
           {
-            Serial.print("msg=");
+            Serial.print(F("msg="));
             for (int i = 0; i < len; i++) 
               Serial.print(msg[i]);
 

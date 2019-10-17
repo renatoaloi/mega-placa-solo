@@ -1,8 +1,5 @@
-
 void draw(void) 
 {
-  //u8g.setFont(u8g_font_helvR08);
-  //u8g.setFont(u8g_font_courR08);
   u8g.setFont(u8g_font_5x8);
   mostraDadosLCD();
 }
@@ -22,11 +19,8 @@ void drawPadrao(void)
 
 void atualizaTelaLCD(int qual)
 {
-  Serial.println("Montando dados no LCD...");
-  Serial.print("Qual = ");
-  Serial.println(qual, DEC);
-
-  if (DEBUG) { Serial.print("Idade LCD3: "); Serial.println(idade_dias); }
+  if (DEBUG) Serial.println(F("Montando dados no LCD..."));
+  if (DEBUG) { Serial.print(F("Qual = ")); Serial.println(qual, DEC); }
   
   u8g.firstPage();
   do 
@@ -39,6 +33,7 @@ void atualizaTelaLCD(int qual)
 
 void atualizaTela()
 {
+  if (DEBUG) Serial.println(F("atualizaTelaLCD1"));
   atualizaTelaLCD(1);
 }
 
@@ -56,159 +51,93 @@ void mostraDadosLCD()
   int colVal = 33;
   int colVal2 = 106;
   int colUnid = 24;
-  //u8g.drawStr( 0, 10, "Hello World!");
-  //u8g.setPrintPos(0, 20); 
-  //u8g.print("Hello World!");
-  // esp01:an=004,esp01:tp=15.9,esp01:um=345.5,esp01:am=150,esp01:co=003,esp01:lu=010,
-
   float t, um, pe;
   int bl = -1;
 
+  // desenha linhas
   u8g.drawLine(0, 26, 128, 26);
   u8g.drawLine(0, 46, 128, 46);
 
-  for (int i = 0; i < 3; i++) tipo[i] = 0;
-  for (int i = 0; i < 18; i++) valor[i] = 0;
+  // Imprime a data
+  char* valor = dateToString(dados.dt);
+  u8g.setPrintPos(colLabel, linha1); 
+  u8g.print("D: ");
+  u8g.print(valor[6]); u8g.print(valor[7]);
+  u8g.print('/');
+  u8g.print(valor[4]); u8g.print(valor[5]);
+  u8g.print('/');
+  u8g.print(valor[2]); u8g.print(valor[3]);
+  u8g.print(' ');
+  u8g.print(valor[9]); u8g.print(valor[10]);
+  u8g.print(':');
+  u8g.print(valor[12]); u8g.print(valor[13]);
 
-  if (DEBUG) { Serial.print("Idade LCD2: "); Serial.println(idade_dias); }
-  
-  for (int j = 0; j < BUFFER_SIZE - TAMANHO_FILTRO; j++)
-  {
-    if (strncmp(&buffer[j], filtro, TAMANHO_FILTRO) == 0)
-    {
-      tipo[0] = buffer[j + TAMANHO_FILTRO];
-      tipo[1] = buffer[j + TAMANHO_FILTRO + 1];
-      
-      //Serial.print("Tipo: ");
-      //Serial.println(tipo);
+  // Imprime anemometro
+  u8g.setPrintPos(colLabel, linha5); 
+  u8g.print("V:"); 
+  u8g.print(dados.anem, 1);
+  u8g.print("m/s");
 
-      qtdeLeitura = 3;
-      if (tipo[0] == 't' && tipo[1] == 'p') 
-        qtdeLeitura = acharPonto(buffer, j);
-      else if (tipo[0] == 'u' && tipo[1] == 'm') 
-        qtdeLeitura = acharPonto(buffer, j);
-      else if (tipo[0] == 'p' && tipo[1] == 'r') 
-        qtdeLeitura = acharPonto(buffer, j);
-      else if (tipo[0] == 'p' && tipo[1] == 'e') 
-        qtdeLeitura = acharPonto(buffer, j) + 2;
-      else if (tipo[0] == 'd' && tipo[1] == 't') 
-        qtdeLeitura = 17;
+  // Imprime Lux
+  u8g.setPrintPos(colLabel2, linha5); 
+  u8g.print("Ilumi.:"); 
+  u8g.setPrintPos(colVal2, linha5);
+  u8g.print(dados.lux);
 
-      int i = 0;
-      while ((i < qtdeLeitura)) 
-      { 
-        valor[i] = buffer[j + (TAMANHO_FILTRO + 3) + i]; 
-        i++; 
-      } 
-      //sValor = String(valor);
-      //ret += sValor;
+  // Imprime pressão
+  u8g.setPrintPos(colLabel2 + 20, linha1); 
+  u8g.print("Pa:"); 
+  u8g.print(dados.pressao);
 
-      // Dados para calculo da sensacao termica
-      if (tipo[0] == 't' && tipo[1] == 'p') t = atof(valor);
-      if (tipo[0] == 'u' && tipo[1] == 'm') um = atof(valor);
-      if (tipo[0] == 'p' && tipo[1] == 'e') pe = atof(valor);
-      if (tipo[0] == 'b' && tipo[1] == 'l')
-      {
-        unsigned int iValor = atoi(valor);
-        bl = iValor;
-      }
-      
-      if (tipo[0] == 'd' && tipo[1] == 't')
-      {
-        u8g.setPrintPos(colLabel, linha1); 
-        u8g.print("D: ");
-        u8g.print(valor[6]); u8g.print(valor[7]);
-        u8g.print('/');
-        u8g.print(valor[4]); u8g.print(valor[5]);
-        u8g.print('/');
-        u8g.print(valor[2]); u8g.print(valor[3]);
-        u8g.print(' ');
-        u8g.print(valor[9]); u8g.print(valor[10]);
-        u8g.print(':');
-        u8g.print(valor[12]); u8g.print(valor[13]);
-        //u8g.print(':');
-        //u8g.print(valor[14]); u8g.print(valor[15]);
-      }
-      else if (tipo[0] == 'a' && tipo[1] == 'n')
-      {
-          unsigned int iValor = atoi(valor);
-          u8g.setPrintPos(colLabel, linha5); 
-          u8g.print("V:"); 
-          u8g.print(SpeedCalcMs(iValor), 1);
-          u8g.print("m/s");
-        
-      }
-      else if (tipo[0] == 'l' && tipo[1] == 'u')
-      {
-        u8g.setPrintPos(colLabel2, linha5); 
-        u8g.print("Ilumi.:"); 
-        u8g.setPrintPos(colVal2, linha5); 
-        unsigned int iValor = atoi(valor);
-        u8g.print(constrain(map(iValor, LUX_ENTRADA_MIN, LUX_ENTRADA_MAX, LUX_SAIDA_MIN, LUX_SAIDA_MAX), LUX_SAIDA_MIN, LUX_SAIDA_MAX));
-      }
-      else if (tipo[0] == 'p' && tipo[1] == 'r')
-      {
-          unsigned int iValor = atoi(valor);
-          u8g.setPrintPos(colLabel2 + 20, linha1); 
-          u8g.print("Pa:"); 
-          u8g.print(iValor);
-      }
+  // Dados da balança
+  if (dados.balanca > 0) {
+    a_t[dados.balanca - 1] = dados.temp;
+    a_um[dados.balanca - 1] = dados.umid;
+    a_pe[dados.balanca - 1] = dados.peso;
 
+    u8g.setPrintPos(colLabel, linhas[0]); 
+    u8g.print("T1:"); 
+    u8g.print(a_t[0]);
+    u8g.print(" T2:");
+    u8g.print(a_t[1]);
+    u8g.print(" T3:");
+    u8g.print(a_t[2]); 
 
-      if (bl != -1)
-      {
-        a_t[bl - 1] = t;
-        a_um[bl - 1] = um;
-        a_pe[bl - 1] = pe;
-        
-          u8g.setPrintPos(colLabel, linhas[0]); 
-          u8g.print("T1:"); 
-          u8g.print(a_t[0]);
-          u8g.print(" T2:");
-          u8g.print(a_t[1]);
-          u8g.print(" T3:");
-          u8g.print(a_t[2]); 
-  
-          u8g.setPrintPos(colLabel, linhas[1]); 
-          u8g.print("U1:"); 
-          u8g.print(a_um[0]);
-          u8g.print(" U2:");
-          u8g.print(a_um[1]);
-          u8g.print(" U3:");
-          u8g.print(a_um[2]); 
-  
-          u8g.setPrintPos(colLabel, linhas[2]); 
-          u8g.print("P1:"); 
-          u8g.print(a_pe[0], 3);
-          u8g.print(" P2:");
-          u8g.print(a_pe[1], 3);
-          u8g.print(" P3:");
-          u8g.print(a_pe[2], 3);  
-        
-      }
+    u8g.setPrintPos(colLabel, linhas[1]); 
+    u8g.print("U1:"); 
+    u8g.print(a_um[0]);
+    u8g.print(" U2:");
+    u8g.print(a_um[1]);
+    u8g.print(" U3:");
+    u8g.print(a_um[2]); 
 
-      for (int i = 0; i < 3; i++) tipo[i] = 0;
-      for (int i = 0; i < 18; i++) valor[i] = 0;
-    }
+    u8g.setPrintPos(colLabel, linhas[2]); 
+    u8g.print("P1:"); 
+    u8g.print(a_pe[0], 3);
+    u8g.print(" P2:");
+    u8g.print(a_pe[1], 3);
+    u8g.print(" P3:");
+    u8g.print(a_pe[2], 3);  
   }
 
-  if (DEBUG) { Serial.print("Idade LCD1: "); Serial.println(idade_dias); }
-
+  // Idade
   u8g.setPrintPos(colLabel, linha6);
   u8g.print("Idade:");
   u8g.setPrintPos(colVal, linha6);
   if (idade_dias < 10) u8g.print("0");
-  u8g.print(idade_dias);
+  u8g.print(dados.idade);
   u8g.setPrintPos(colVal + colUnid - 10, linha6); 
   u8g.print("d");
 
+  // Ciclo
   u8g.setPrintPos(colLabel2, linha6);
   u8g.print("Ciclo:");
   u8g.setPrintPos(colVal2, linha6);
-  if (idade_dias >= 0 && idade_dias <= 3) u8g.print("01");
-  if (idade_dias >= 4 && idade_dias <= 7) u8g.print("02");
-  if (idade_dias >= 8 && idade_dias <= 14) u8g.print("03");
-  if (idade_dias >= 15 && idade_dias <= 21) u8g.print("04");
-  if (idade_dias >= 22 && idade_dias <= 30) u8g.print("05");
-  if (idade_dias >= 31               ) u8g.print("06");
+  if (dados.idade >= 0 && dados.idade <= 3) u8g.print("01");
+  if (dados.idade >= 4 && dados.idade <= 7) u8g.print("02");
+  if (dados.idade >= 8 && dados.idade <= 14) u8g.print("03");
+  if (dados.idade >= 15 && dados.idade <= 21) u8g.print("04");
+  if (dados.idade >= 22 && dados.idade <= 30) u8g.print("05");
+  if (dados.idade >= 31               ) u8g.print("06");
+  
 }
