@@ -29,8 +29,8 @@
 #define RESET_ESP01           24
 
 // Definir aqui a mensagem de retorno do PHP
-#define GPRS_OK_MSG         "+HTTPACTION:1,"
-#define GPRS_OK_MSG_LEN     14
+#define GPRS_OK_MSG         "+HTTPACTION: 1,"
+#define GPRS_OK_MSG_LEN     15
 
 // Configurar aqui o intervalo de envio sem alerta
 //#define INTERVALO_ENVIO_NORMAL       1200000   // 20 minutos
@@ -72,7 +72,8 @@
 
 // Configuração de depuração
 // Somente ligar quando estiver testando no PC
-#define DEBUG 1
+#define DEBUG 0
+#define INFO 1
 
 
 // Velocidades de Baud Rate do Módulo GSM
@@ -227,9 +228,9 @@ void loop()
     }
     else {
       serialTerminou = true;
-      if (DEBUG) Serial.println(F("Serial Terminou"));
-      if (DEBUG) { Serial.print(F("Contador: ")); Serial.println(contador); }
-      if (DEBUG) Serial.println(buffer);
+      if (DEBUG || INFO) Serial.println(F("Serial Terminou"));
+      if (DEBUG || INFO) { Serial.print(F("Contador: ")); Serial.println(contador); }
+      if (DEBUG || INFO) Serial.println(buffer);
     }
   }
 
@@ -261,8 +262,7 @@ void loop()
   // Verifica primeiro se tem alerta
   if (recebeu_dados && tempo_envio_alerta < millis())
   {
-    // Limpando a variável de recebimento de dados
-    recebeu_dados = false;
+    
     
     // enviar via GSM
     enviaGSM();

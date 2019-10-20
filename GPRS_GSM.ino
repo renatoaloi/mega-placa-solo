@@ -25,14 +25,14 @@ boolean initGPRS()
 void powerUpOrDown()
 {
   //Liga o GSM Shield
-  Serial.print(F("Liga GSM..."));
+  if (DEBUG || INFO) Serial.print(F("Liga GSM..."));
 
   pinMode(POWER_GSM, OUTPUT);
   digitalWrite(POWER_GSM, LOW);
   delay(1000);
   digitalWrite(POWER_GSM, HIGH);
 
-  Serial.println(F("OK!"));
+  if (DEBUG || INFO) Serial.println(F("OK!"));
   delay(3000);
 }
 
@@ -44,12 +44,11 @@ void configVelocidade()
     Serial3.begin(velocidades[i]);
     delay(300);
 
-    Serial.print(F("Testando Velocidade: "));
-    Serial.println(velocidades[i]);
+    if (DEBUG || INFO) { Serial.print(F("Testando Velocidade: ")); Serial.println(velocidades[i]); }
 
     // Envia um comando AT
     Serial3.println(F("AT"));
-    Serial.println(F("AT"));
+    if (DEBUG || INFO) Serial.println(F("AT"));
     delay(2000);
 
     // Verifica resposta
@@ -70,14 +69,14 @@ void configVelocidade()
         delay(1000);
         
         Serial3.println("AT&W");
-        Serial.println(F("AT&W"));
+        if (DEBUG || INFO) Serial.println(F("AT&W"));
         delay(2000);
   
         // Verifica resposta
         verificaResposta();
         
         // Reiniciando o módulo
-        Serial.println(F("Reiniciando modulo"));
+        if (DEBUG || INFO) Serial.println(F("Reiniciando modulo"));
         efetuarResetGSM();
         //powerUpOrDown();
       }
@@ -108,7 +107,7 @@ boolean isConnected()
 {
   boolean registrado = false;
   unsigned long tempo = millis() + TEMPO_LIGANDO;
-  Serial.println(F("Verificando registro na rede!"));
+  if (DEBUG || INFO) Serial.println(F("Verificando registro na rede!"));
   while (!registrado && tempo > millis())
   {
     gprs_send("AT+CREG?\r\n");
@@ -120,10 +119,10 @@ boolean isConnected()
     }
   }
   if (registrado)
-    Serial.println(F("OK! Registrado na rede!"));
+    if (DEBUG || INFO) Serial.println(F("OK! Registrado na rede!"));
   else
   {
-    Serial.println(F("ERRO sem rede!"));
+    if (DEBUG || INFO) Serial.println(F("ERRO sem rede!"));
     //while(1);
   }
   return registrado;
@@ -216,8 +215,7 @@ bool enviarMsg(char *msg, unsigned int len)
           gprs_send(",30000\r\n");
           if (check_gprs(5000, "DOWNLOAD\r\n", 10))
           {
-            for (int i = 0; i < len; i++) 
-              Serial.print(msg[i]);
+            if (DEBUG || INFO) { for (int i = 0; i < len; i++) Serial.print(msg[i]); }
               
             for (int i = 0; i < len; i++) 
               Serial3.print(msg[i]);
@@ -263,9 +261,7 @@ bool enviarTelegram(char *msg)
           gprs_send(",30000\r\n");
           if (check_gprs(5000, "DOWNLOAD\r\n", 10))
           {
-            Serial.print(F("msg="));
-            for (int i = 0; i < len; i++) 
-              Serial.print(msg[i]);
+            if (DEBUG || INFO) { Serial.print(F("msg=")); for (int i = 0; i < len; i++) Serial.print(msg[i]); }
 
             Serial3.print("msg=");
             for (int i = 0; i < len; i++) 
@@ -288,12 +284,6 @@ bool enviarTelegram(char *msg)
   check_gprs(2000, "OK\r\n", 4);
   return ret;
 }
-
-
-
-
-
-
 
 boolean efetuarLigacao()
 {
@@ -365,7 +355,7 @@ void gprs_clear(int vezes)
 void gprs_send(const char *cmd)
 {
   while(Serial3.available()) Serial3.read();
-  //Serial.print(cmd);
+  if (DEBUG) Serial.print(cmd);
   Serial3.print(cmd);
   delay(30);
 }
@@ -384,7 +374,7 @@ bool check_gprs(unsigned long intervalo, char *resp, int len)
     delay(1);
     if (cc != -1) 
     {
-      Serial.print((char)cc); 
+      if (DEBUG || INFO) Serial.print((char)cc); 
       if (conta < BUFFER_SIZE) buff[conta++] = (char)cc; 
     }
     if (conta >= len)
@@ -400,7 +390,7 @@ bool check_gprs(unsigned long intervalo, char *resp, int len)
     }
   } while ( t > millis() && !ret );
   while(Serial3.available()) Serial3.read();
-  Serial.println();
+  if (DEBUG || INFO) Serial.println();
   return ret;
 }
 
@@ -421,7 +411,7 @@ bool check_gprs_http(unsigned long intervalo, char *resp, int len)
     delay(1);
     if (cc != -1) 
     {
-      Serial.print((char)cc); 
+      if (DEBUG || INFO) Serial.print((char)cc); 
       if (conta < BUFFER_SIZE) buff[conta++] = (char)cc; 
     }
     if (conta >= len)
@@ -436,7 +426,7 @@ bool check_gprs_http(unsigned long intervalo, char *resp, int len)
             delay(1);
             if (cc != -1) 
             {
-              Serial.print((char)cc); 
+              if (DEBUG || INFO) Serial.print((char)cc); 
               ibuf[j] = (char)cc; 
             }
           }
@@ -448,7 +438,7 @@ bool check_gprs_http(unsigned long intervalo, char *resp, int len)
     }
   } while ( t > millis() && !ret );
   while(Serial3.available()) Serial3.read();
-  Serial.println();
+  if (DEBUG || INFO) Serial.println();
   return ret;
 }
 
@@ -463,13 +453,13 @@ bool check_gprs_mask(unsigned long intervalo, char resp, int times)
     cc = Serial3.read();
     if (cc != -1) 
     {
-      Serial.print((char)cc); 
+      if (DEBUG || INFO) Serial.print((char)cc); 
       if ((char)cc == resp) conta++; 
     }
     if (conta >= times && (char)cc == '\n') ret = true;
   } while ( t > millis() && !ret );
   while(Serial3.available()) Serial3.read();
-  Serial.println();
+  if (DEBUG || INFO) Serial.println();
   return ret;
 }
 
@@ -483,7 +473,7 @@ bool verificaResposta()
     int c = Serial3.read();
     if (c == 'O') ok1 = true;
     if (c == 'K' && ok1) ok2 = true;
-    Serial.print((char)c);
+    if (DEBUG || INFO) Serial.print((char)c);
   }
   return (ok1 && ok2);
 }

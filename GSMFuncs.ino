@@ -9,8 +9,8 @@ void enviaGSM () {
     unsigned int len = msg.length();
     
     // Debug
-    if (DEBUG) { Serial.print(F("Enviando do loop: ")); Serial.println(msg); }
-    if (DEBUG) { Serial.print(F("Len: ")); Serial.println(len); }
+    if (DEBUG || INFO) { Serial.print(F("Enviando do loop: ")); Serial.println(msg); }
+    if (DEBUG || INFO) { Serial.print(F("Len: ")); Serial.println(len); }
   
     boolean envia = false;
 
@@ -41,17 +41,20 @@ void enviaGSM () {
       if (enviarMsg(msg.c_str(), msg.length()))
       {
         delay(500);
-        Serial.println(F("Cheguei aqui. Codigo: 1H2J3K4L"));
+        if (DEBUG || INFO) Serial.println(F("Cheguei aqui. Codigo: 1H2J3K4L"));
     
         // Se deu certo limpa contador de erros
         contadorErroEnvio = 0;
       }
       else
       {
-        Serial.println(F("Deu erro no envio"));
+        if (DEBUG || INFO) Serial.println(F("Deu erro no envio"));
         // Se deu erro incrementa contador de erros
         contadorErroEnvio++;
       }
+
+      // Limpando a variável de recebimento de dados
+      recebeu_dados = false;
     }
     
     delay(TEMPO_APOS_ENVIO_SERVIDOR);    
@@ -68,7 +71,8 @@ String montaRegistro() {
   ret += "&pressaoatm=0";
 
   ret += "&velocidadevento=" + String(dados.anem);
-  ret += "&umidade=" + String(dados.umid);
+  ret += "&temperatura=" + String(dados.temp, 2);
+  ret += "&umidade=" + String(dados.umid, 2);
   ret += "&amonia=" + String(dados.amonia);
   ret += "&correnteeletrica=" + String(dados.corrente);
   ret += "&luminosidade=" + String(dados.lux);
@@ -76,7 +80,9 @@ String montaRegistro() {
   ret += "&indicedias=" + String(dados.indicedias);
   ret += "&idade=" + String(dados.idade);
   ret += "&peso=" + String(dados.peso, 3);
+  ret += "&pressaoatm=" + String(dados.pressao);
   ret += "&pressao=" + String(dados.pressao);
+  ret += "&sensacaotermica=" + String(calcularSensacaoTermica(dados.temp, dados.umid), 2);
   ret += "&balanca=" + String(dados.balanca);
   
   return ret;
