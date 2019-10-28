@@ -244,6 +244,11 @@ void loop()
     // filtrando dados da serial
     dados = filtroDados(&buffer[0]);
 
+    // Limpa buffer de recebimento
+    // Posso limpar o buffer agora, pois os dados 
+    // estão agora na estrutura dadosType
+    limpaBuffers();
+
     // Avisando que dados estão disponíveis da serial
     recebeu_dados = true;
   }
