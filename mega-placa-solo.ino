@@ -229,6 +229,7 @@ void loop()
 
     if (c == '{') {
        startSerial = 1;
+       limpaBuffers();
     }
     else if (c == '}') {
       startSerial = 0;
@@ -239,7 +240,7 @@ void loop()
     }
     else {
       if (startSerial == 1 && c != 10 && c != 13)
-          buffer[contador++];
+          buffer[contador++] = c;
     }
   }
 
