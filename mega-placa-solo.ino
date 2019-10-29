@@ -220,28 +220,40 @@ void loop()
     char c = 0;
     if (DEBUG) c = Serial.read();
     else c = Serial1.read();
-    
-    if (c != 13)
-    {
-      if (contador < BUFFER_SIZE - 1)
-        if (contador == 0 && c == 'e') buffer[contador++] = c;
-        else if (contador == 1 && c == 's') buffer[contador++] = c;
-        else if (contador == 2 && c == 'p') buffer[contador++] = c;
-        else if (contador == 3 && c == '0') buffer[contador++] = c;
-        else if (contador == 4 && c == '1') buffer[contador++] = c;
-        else if (contador == 5 && c == ':') buffer[contador++] = c;
-        else if (contador == 6 && c == 'a') buffer[contador++] = c;
-        else if (contador == 7 && c == 'n') buffer[contador++] = c;
-        else if (contador > 7) buffer[contador++] = c;
-        else {
-          limpaBuffers();
-        }
+
+    if (c == '{') {
+       startSerial = 1;
     }
-    else {
+    //else if (c != 13)
+    //{
+
+      
+
+
+//      if (contador < BUFFER_SIZE - 1)
+//        if (contador == 0 && c == 'e') 6[contador++] = c;
+//        else if (contador == 1 && c == 's') buffer[contador++] = c;
+//        else if (contador == 2 && c == 'p') buffer[contador++] = c;
+//        else if (contador == 3 && c == '0') buffer[contador++] = c;
+ //       else if (contador == 4 && c == '1') buffer[contador++] = c;
+ //       else if (contador == 5 && c == ':') buffer[contador++] = c;
+ //       else if (contador == 6 && c == 'a') buffer[contador++] = c;
+//        else if (contador == 7 && c == 'n') buffer[contador++] = c;
+ //       else if (contador > 7) buffer[contador++] = c;
+  //      else {
+ //         limpaBuffers();
+  //      }
+    }
+    else if (c == '}') {
+      startSerial = 0;
       serialTerminou = true;
       if (DEBUG || INFO) Serial.println(F("Serial Terminou"));
       if (DEBUG || INFO) { Serial.print(F("Contador: ")); Serial.println(contador); }
       if (DEBUG || INFO) Serial.println(buffer);
+    }
+    else {
+      if (startSerial == 1 && c != 10 && c != 13))
+          buffer[contador++];
     }
   }
 
