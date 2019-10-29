@@ -224,7 +224,18 @@ void loop()
     if (c != 13)
     {
       if (contador < BUFFER_SIZE - 1)
-        buffer[contador++] = c;
+        if (contador == 0 && c == 'e') buffer[contador++] = c;
+        else if (contador == 1 && c == 's') buffer[contador++] = c;
+        else if (contador == 2 && c == 'p') buffer[contador++] = c;
+        else if (contador == 3 && c == '0') buffer[contador++] = c;
+        else if (contador == 4 && c == '1') buffer[contador++] = c;
+        else if (contador == 5 && c == ':') buffer[contador++] = c;
+        else if (contador == 6 && c == 'a') buffer[contador++] = c;
+        else if (contador == 7 && c == 'n') buffer[contador++] = c;
+        else if (contador > 7) buffer[contador++] = c;
+        else {
+          limpaBuffers();
+        }
     }
     else {
       serialTerminou = true;
