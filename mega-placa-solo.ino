@@ -225,7 +225,7 @@ void loop()
     if (DEBUG) c = Serial.read();
     else c = Serial1.read();
 
-    Serial.print(c)
+    Serial.print(c);
 
     if (c == '{') {
        startSerial = 1;
