@@ -140,6 +140,8 @@ char buffer[BUFFER_SIZE];
 
 char startSerial;
 
+char contador_reinicia;
+
 // Configurar aqui a data inicial do lote
 //                             ano,mes,dia,hr,min,seg
 DateTime dtini_lote = DateTime(2019, 10, 13, 23, 52, 0);
@@ -212,6 +214,8 @@ void setup()
   if (DEBUG) Serial.println(F("atualizaTelaLCD2"));
   atualizaTelaLCD(2);
   tempo_lcd = millis() + INTERVALO_LCD;
+
+  contador_reinicia = 0;
 }
 
 void loop() 

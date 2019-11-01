@@ -110,6 +110,9 @@ boolean isConnected()
   if (DEBUG || INFO) Serial.println(F("Verificando registro na rede!"));
   while (!registrado && tempo > millis())
   {
+    // Aumenta contador se não consegue conectar
+    contador_reinicia++;
+    
     gprs_send("AT+CREG?\r\n");
     if(check_gprs(5000, "+CREG: 0,1\r\n", 12)) registrado = true;
     if (!registrado)
@@ -117,9 +120,24 @@ boolean isConnected()
       gprs_send("AT+CREG?\r\n");
       if(check_gprs(5000, "+CREG: 0,5\r\n", 12)) registrado = true;
     }
+
+    // Se não conseguiu conectar e contador maior que zero
+    if (!registrado && contador_reinicia > 0) {
+      // Iniciando GPRS
+      while (!initGPRS())
+      {
+        // Se não iniciou, liga o módulo
+        Serial.println(F("Ligando GRPS..."));
+        powerUpOrDown();
+        delay(3000);
+      }
+      Serial.println(F("GPRS Iniciado OK!"));
+    }
   }
-  if (registrado)
+  if (registrado) {
+    contador_reinicia = 0;
     if (DEBUG || INFO) Serial.println(F("OK! Registrado na rede!"));
+  }
   else
   {
     if (DEBUG || INFO) Serial.println(F("ERRO sem rede!"));
