@@ -19,17 +19,17 @@
 
 // Definir aqui suas configuracoes
 #define RESET_GSM           36   // configurar aqui o pino de RESET do GSM
-#define POWER_GSM           9   // configurar aqui o pino de Power do GSM
+#define POWER_GSM           12   // configurar aqui o pino de Power do GSM
 #define BAUD_GSM            9600 // mudar aqui a velocidade da serial do GSM
-#define APN_URL             "zap.vivo.com.br"
-#define APN_USER            "vivo"
-#define APN_PWD             "vivo"
+#define APN_URL             "CLARO.COM.BR"
+#define APN_USER            "claro"
+#define APN_PWD             "claro"
 
 // Porta RESET do ESP01
 #define RESET_ESP01           24
 
 // Definir aqui a mensagem de retorno do PHP
-#define GPRS_OK_MSG         "+HTTPACTION: 1,"
+#define GPRS_OK_MSG         "+HTTPACTION:1,"
 #define GPRS_OK_MSG_LEN     15
 
 // Configurar aqui o intervalo de envio sem alerta
@@ -51,19 +51,19 @@
 #define TEMPO_APOS_ENVIO_SERVIDOR    10000 // 10 segs
 
 // Configurações de Tempo
-//#define INTERVALO_ALERTA    300000UL // 5 minutos
+//#define INTERVALO_ALERTA    300000UL // 5 minutosTT
 #define INTERVALO_ALERTA    30000UL // 30 segundos
 #define INTERVALO_LCD       10000UL // 10 segundos
 #define TEMPO_LIGANDO       90000UL // 1m30s
 
 //configurar aqui os limites
-#define LUX_ENTRADA_MAX     33
-#define LUX_ENTRADA_MIN     520
-#define LUX_SAIDA_MAX       400
+#define LUX_ENTRADA_MAX     0
+#define LUX_ENTRADA_MIN     0
+#define LUX_SAIDA_MAX       0
 #define LUX_SAIDA_MIN       0
-#define AMONIA_ENTRADA_MAX  380
-#define AMONIA_ENTRADA_MIN  10
-#define AMONIA_SAIDA_MAX    200
+#define AMONIA_ENTRADA_MAX  0
+#define AMONIA_ENTRADA_MIN  0
+#define AMONIA_SAIDA_MAX    0
 #define AMONIA_SAIDA_MIN    0
 
 // Configuracoes internas (NAO MEXER)
@@ -81,7 +81,7 @@
 const int qtdeVelocidades = 8;
 const unsigned long velocidades[] = { 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200 };
 
-const int   qtdeCelular  = 1;
+const int   qtdeCelular  = 0;
 const char* celular[]    = { "44998416732", "11964676136", "11964676136" };
 const char  qual_ligar[] = { 1, 0, 0 }; // Configurar 1 para ligar e 0 para não ligar
 const char  qual_sms[]   = { 1, 0, 0 }; // Configurar 1 para enviar sms e 0 para não enviar
@@ -144,7 +144,7 @@ char contador_reinicia;
 
 // Configurar aqui a data inicial do lote
 //                             ano,mes,dia,hr,min,seg
-DateTime dtini_lote = DateTime(2019, 10, 13, 23, 52, 0);
+DateTime dtini_lote = DateTime(2019, 10, 13, 4, 20, 0);
 
 RTC_DS1307 rtc;
 
